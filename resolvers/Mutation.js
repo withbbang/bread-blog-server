@@ -9,6 +9,5 @@ module.exports = {
         }
         metaData.photos.push(newPhoto);
         return newPhoto
-    
       }
 }
