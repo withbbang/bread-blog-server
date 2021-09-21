@@ -29,7 +29,7 @@ const requestGithubUserAccount = token =>
     .then(res => res.json())
     .catch(error => {
         throw new Error(JSON.stringify(error));
-    })
+    });
 
 const authorizeWithGithub = async credentials => {
     const { access_token } = await requestGithubToken(credentials);
