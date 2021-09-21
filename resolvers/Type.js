@@ -3,14 +3,14 @@ const metaData = require('../metaData');
 
 module.exports = {
     Photo: {
+        id: parent => parent.id || parent._id,
         url: parent => 'http://www.newsthevoice.com/news/photo/202009/14648_15275_4946.jpg',
-        postedBy: parent => {
-            return metaData.users.find(u => u.githubLogin === parent.githubUser)
-        },
-        taggedUsers: parent => metaData.tags
-                                .filter(tag => tag.photoID === parent.id)
-                                .map(tag => tag.userID)
-                                .map(userID => metaData.users.find(u => u.githubLogin === userID))
+        postedBy: (parent, args, { db }) =>
+            db.collection('users').findOne({ githubLogin: parent.userID }),
+        // taggedUsers: parent => metaData.tags
+        //     .filter(tag => tag.photoID === parent.id)
+        //     .map(tag => tag.userID)
+        //     .map(userID => metaData.users.find(u => u.githubLogin === userID))
     },
     User: {
         postedPhotos: parent => {
