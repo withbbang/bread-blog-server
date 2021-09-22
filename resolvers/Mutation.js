@@ -48,16 +48,17 @@ module.exports = {
     };
 
     // 4. 데이터를 새로 추가하거나 이미 있는 데이터를 업데이트 한다.
-    // 2021-09-21 api 에러 수정하기
-    const { ops: [user] } = await db
-      .collection('users')
-      .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
+    await db.collection('users').replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true })
+    const user = await db.collection('users').findOne({ githubLogin : login });
 
     // 5. 사용자 데이터와 토큰을 반환한다.
     return { user, token: access_token };
   },
 
-  async addFakeUsers(root, { count }, { db }) {
+  async addFakeUsers(root, { count }, { db, currentUser }) {
+    // 컨텍스트에 사용자가 존재하지 않으면 에러
+    if(!currentUser) throw new Error('Only an authorized user can add fake users');
+
     const { results } =
       await fetch(`https://randomuser.me/api/?results=${count}`)
       .then(res => res.json())
