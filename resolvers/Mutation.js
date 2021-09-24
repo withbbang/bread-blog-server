@@ -55,7 +55,7 @@ module.exports = {
     return { user, token: access_token };
   },
 
-  async addFakeUsers(root, { count }, { db, currentUser }) {
+  async addFakeUsers(root, { count }, { db, currentUser, pubsub }) {
     // 컨텍스트에 사용자가 존재하지 않으면 에러
     if(!currentUser) throw new Error('Only an authorized user can add fake users');
 
@@ -73,8 +73,18 @@ module.exports = {
 
     await db.collection('users').insertMany(users);
 
+    // 값 반환 전에 subscription 보고
+    pubsub.publish('addFakeUsers', { 
+      addFakeUsers: 'addFakeUsers'
+    });
+
     return users;
   },
+
+  // async deleteFakeUser(root, { count }, {db, currentUser, pubsub }) {
+  //   // 컨텍스트에 사용자가 존재하지 않으면 에러
+  //   if(!currentUser) throw new Error('Only an authorized user can add fake users');
+  // },
 
   async fakeUserAuth(parent, { githubLogin }, { db }) {
     const user = await db.collection('users').findOne({ githubLogin });

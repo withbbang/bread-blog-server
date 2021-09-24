@@ -43,6 +43,7 @@ type Query {
   totalUsers: Int!
   allUsers: [User!]!
   me: User
+  test: String!
 }
 
 type Mutation {
@@ -50,4 +51,9 @@ type Mutation {
   githubAuth(code: String!): AuthPayload!
   addFakeUsers(count: Int = 1): [User!]!
   fakeUserAuth(githubLogin: ID!): AuthPayload!
+}
+
+type Subscription {
+  addFakeUsers: String!
+  test: String!
 }
