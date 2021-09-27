@@ -55,7 +55,7 @@ module.exports = {
     return { user, token: access_token };
   },
 
-  async addFakeUsers(root, { count }, { db, currentUser, pubsub }) {
+  async addFakeUsers(parent, { count }, { db, currentUser, pubsub }) {
     // 컨텍스트에 사용자가 존재하지 않으면 에러
     if(!currentUser) throw new Error('Only an authorized user can add fake users');
 
