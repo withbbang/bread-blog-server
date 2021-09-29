@@ -23,7 +23,7 @@ require('dotenv').config();
     const app = express();
     // httpServer로 app 다시 생성
     const httpServer = http.createServer(app);
-    // 데이터베이스 인스턴스 생성
+    // 몽고디비 호스트 정보
     const MONGO_DB = process.env.DB_HOST;
 
     // subscription 엔진 생성
