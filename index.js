@@ -78,8 +78,13 @@ require('dotenv').config();
 
     const subscriptionServer = SubscriptionServer.create(
         { schema, execute, subscribe,
-            async onConnect() {
-                return { pubsub }
+            async onConnect({ authorization }) {
+                if(authorization){
+                    const currentUser = await db.collection('users').findOne({ githubToken: authorization });
+                    return { currentUser, pubsub };
+                }else{
+                    return { pubsub };
+                }
             }
         },
         { server: httpServer, path: server.graphqlPath }
