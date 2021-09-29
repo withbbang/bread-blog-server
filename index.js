@@ -77,7 +77,11 @@ require('dotenv').config();
     });
 
     const subscriptionServer = SubscriptionServer.create(
-        { schema, execute, subscribe },
+        { schema, execute, subscribe,
+            async onConnect() {
+                return { pubsub }
+            }
+        },
         { server: httpServer, path: server.graphqlPath }
     );
 
