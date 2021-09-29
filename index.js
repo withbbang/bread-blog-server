@@ -76,11 +76,16 @@ require('dotenv').config();
         paht: '/'
     });
 
+    // ws용 subscription server 인스턴스 생성
     const subscriptionServer = SubscriptionServer.create(
         { schema, execute, subscribe,
-            async onConnect({ authorization }) {
-                if(authorization){
-                    const currentUser = await db.collection('users').findOne({ githubToken: authorization });
+            // ***************매우 중요***************
+            // http 요청과 ws 요청은 다르게 동작하므로
+            // ws요청 context는 onConnect에서 전달해야한다!!
+            async onConnect(connectionParams, WebSocket, ConnectionContext) {
+                // Apollo docs 확인하고 ws를 통해 auth 전달하는 법 구현
+                if(connectionParams.authorization){
+                    const currentUser = await db.collection('users').findOne({ githubToken: connectionParams.authorization });
                     return { currentUser, pubsub };
                 }else{
                     return { pubsub };
