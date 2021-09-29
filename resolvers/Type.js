@@ -1,7 +1,8 @@
 const { GraphQLScalarType } = require('graphql');
 const metaData = require('../metaData');
 
-// parent 인자값은 커스텀 루트타입 쿼리만 가질 수 있다. 다른 기본 쿼리(Query, Mutation, Subscription)은 undefined
+// 하위는 타입에 정의되어 있는 필드 중 특별히 걸러야하는 부분을 함수로 거침
+// parent 인자값은 여기 Type으로 재지정된 곳만 가질 수 있다. 다른 기본 쿼리(Query, Mutation, Subscription)은 undefined
 // parent 인자값은 해당 함수를 품고 있는 객체를 가리킴. ex) postedBy 함수의 parent 인자값은 Photo을 가리킨다.
 module.exports = {
     Photo: {
