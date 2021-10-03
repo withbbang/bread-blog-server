@@ -1,14 +1,11 @@
 module.exports = {
-    addFakeUsers: {
-        subscribe: (parent, args, { pubsub }) => {
-            console.log(parent)
-            return pubsub.asyncIterator('addFakeUsers')
-        }
-    },
-    test: {
-        subscribe: (parent, args, { currentUser, pubsub }) => {
-            console.log(currentUser)
-            return pubsub.asyncIterator('test')
-        }
-    }
-}
+  newPhoto: {
+    subscribe: (parent, args, { pubsub }) => pubsub.asyncIterator("photo-added"),
+  },
+  newUser: {
+    subscribe: (parent, args, { currentUser, pubsub }) => pubsub.asyncIterator("user-added"),
+  },
+  test: {
+    subscribe: (parent, args, { currentUser, pubsub }) => pubsub.asyncIterator("test"),
+  },
+};

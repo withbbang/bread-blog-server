@@ -54,6 +54,7 @@ type Mutation {
 }
 
 type Subscription {
-  addFakeUsers: String!
+  newPhoto: Photo!
+  newUser: User!
   test: String!
 }

@@ -1,7 +1,7 @@
-const Query = require('./Query');
-const Mutation = require('./Mutation');
-const Subscription = require('./Subscription');
-const Type = require('./Type');
+const Query = require("./Query");
+const Mutation = require("./Mutation");
+const Subscription = require("./Subscription");
+const Type = require("./Type");
 
 // 리졸버
 // 0) 실제 데이터를 가공해서 보내주는 객체.
@@ -11,5 +11,5 @@ module.exports = {
   Query,
   Mutation,
   Subscription,
-  ...Type
+  ...Type,
 };
