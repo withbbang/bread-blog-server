@@ -8,6 +8,9 @@ const { PubSub } = require("graphql-subscriptions");
 const { execute, subscribe } = require("graphql");
 const { SubscriptionServer } = require("subscriptions-transport-ws");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
+const { createComplexityLimitRule } = require("graphql-validation-complexity");
+const { graphqlUploadExpress } = require("graphql-upload");
+const path = require("path");
 
 const typeDefs = readFileSync("./typeDefs.graphql", "utf8");
 const resolvers = require("./resolvers");
@@ -40,6 +43,11 @@ require("dotenv").config();
   // 전달해서 서버 인스턴스 생성.
   const server = new ApolloServer({
     schema,
+    validationRules: [
+      createComplexityLimitRule(1000, {
+        onCost: (cost) => console.log("query cost: ", cost),
+      }),
+    ],
     // 컨텍스트 : 모든 요청에 들어가는 인자 ex) db정보, subscription 엔진 등
     context: async ({ req, connection }) => {
       const githubToken = req ? req.headers.authorization : connection.context.Authorization;
@@ -72,6 +80,8 @@ require("dotenv").config();
     app,
     paht: "/",
   });
+
+  app.use("/img/photos", express.static(path.join(__dirname, "assets", "photos")));
 
   // ws용 subscription server 인스턴스 생성
   const subscriptionServer = SubscriptionServer.create(
