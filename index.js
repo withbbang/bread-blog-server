@@ -44,6 +44,7 @@ require("dotenv").config();
   const server = new ApolloServer({
     schema,
     validationRules: [
+      // 쿼리 코스트 계산 함수 -> 첫번째 인자값은 최대 쿼리 코스트 제한. 초과하면 에러.
       createComplexityLimitRule(1000, {
         onCost: (cost) => console.log("query cost: ", cost),
       }),
@@ -102,7 +103,7 @@ require("dotenv").config();
         }
       },
     },
-    { server: httpServer, path: server.graphqlPath }
+    { server: httpServer, path: server.graphqlPath },
   );
 
   // 서버 구동 수정
