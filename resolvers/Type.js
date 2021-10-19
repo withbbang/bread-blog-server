@@ -11,8 +11,7 @@ module.exports = {
   Photo: {
     id: (parent) => parent.id || parent._id,
     url: (parent) => {
-      console.log(parent._id);
-      let toPath = path.join(__dirname, "..", "photos", `${parent._id}.jpg`);
+      let toPath = path.join(__dirname, "..", "photos", `${parent._id}`);
       return `file:///${toPath}.jpg`;
     },
     postedBy: (parent, args, { db }) => db.collection("users").findOne({ githubLogin: parent.userID }),
