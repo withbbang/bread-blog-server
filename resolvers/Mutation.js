@@ -9,20 +9,24 @@ module.exports = {
       // 1. 컨텍스트에 사용자가 존재하지 않으면 에러
       if (!currentUser) throw new Error("Only an authorized user can post a photo");
 
+      const { name, category, description } = args.input;
+      const { createReadStream } = await args.input.file;
+
       // 2. 현재 사용자의 id와 사진을 저장.
       const newPhoto = {
-        ...args.input,
+        name,
+        description,
+        category,
         userID: currentUser.githubLogin,
         created: new Date(),
       };
 
       // 3. 데이터베이스에 새로운 사진을 넣고, 반환되는 id 값을 받는다.
-      const { insertedIds } = await db.collection("photos").insertOne(newPhoto);
-      newPhoto.id = insertedIds;
+      const { insertedId } = await db.collection("photos").insertOne(newPhoto);
 
-      let toPath = path.join(__dirname, "..", "assets", "photos", `${newPhoto.id}.jpg`);
+      let toPath = path.join(__dirname, "..", "photos", `${insertedId.str}.jpg`);
+      const stream = createReadStream();
 
-      const { stream } = await args.input.file;
       await uploadStream(stream, toPath);
 
       pubsub.publish("photo-added", { newPhoto });

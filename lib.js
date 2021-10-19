@@ -35,15 +35,15 @@ const authorizeWithGithub = async (credentials) => {
 const uploadStream = (stream, path) =>
   new Promise((resolve, reject) => {
     stream
+      .pipe(fs.createWriteStream(path))
+      .on("finish", resolve)
       .on("error", (error) => {
         if (stream.truncated) {
           fs.unlinkSync(path);
         }
         console.log(error);
         reject(error);
-      })
-      .on("end", resolve)
-      .pipe(fs.createWriteStream(path));
+      });
   });
 
 module.exports = { authorizeWithGithub, uploadStream };

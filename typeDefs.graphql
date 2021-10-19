@@ -20,7 +20,7 @@ type User {
 
 type Photo {
   id: ID!
-  url: String!
+  url: String
   name: String!
   description: String
   category: PhotoCategory!

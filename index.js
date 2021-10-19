@@ -73,6 +73,8 @@ require("dotenv").config();
   app.get("/", (req, res) => res.end("Welcome to PhotoShare API"));
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
+  app.use(graphqlUploadExpress());
+
   // 서버구동
   await server.start();
 
