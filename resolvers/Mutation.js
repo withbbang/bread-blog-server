@@ -40,15 +40,15 @@ module.exports = {
     }
   },
 
-  async deletePhoto(parent, args, { db, currentUser, pubsub }) {
+  async deletePhoto(parent, { id }, { db, currentUser, pubsub }) {
     try {
       if (!currentUser) throw new Error("Only an authorized user can delete a photo");
 
-      const _id = ObjectId(args.id);
+      const _id = ObjectId(id);
       const { name } = await db.collection("photos").findOne({ _id });
 
       await db.collection("photos").deleteOne({ _id });
-      const data = await deleteS3(name);
+      await deleteS3(name);
 
       return `Delete ${name} success`;
     } catch (e) {
@@ -118,10 +118,18 @@ module.exports = {
     }
   },
 
-  // async deleteFakeUser(root, { count }, {db, currentUser, pubsub }) {
-  //   // 컨텍스트에 사용자가 존재하지 않으면 에러
-  //   if(!currentUser) throw new Error('Only an authorized user can add fake users');
-  // },
+  async deleteFakeUser(parent, args, { db, currentUser, pubsub }) {
+    try {
+      if (!currentUser) throw new Error("Only an authorized user can delete a photo");
+
+      const { githubLogin, name } = args.input;
+      await db.collection("users").deleteOne({ githubLogin });
+
+      return `Delete ${name} success`;
+    } catch (e) {
+      console.log(e);
+    }
+  },
 
   async fakeUserAuth(parent, { githubLogin }, { db }) {
     try {

@@ -48,6 +48,7 @@ type Mutation {
   deletePhoto(id: String!): String
   githubAuth(code: String!): AuthPayload!
   addFakeUsers(count: Int = 1): [User!]!
+  deleteFakeUser(input: DeleteFakeUserInput!): String
   fakeUserAuth(githubLogin: ID!): AuthPayload!
 }
 
@@ -62,4 +63,9 @@ input PostPhotoInput {
   category: PhotoCategory = PORTRAIT
   description: String
   file: Upload!
+}
+
+input DeleteFakeUserInput {
+  githubLogin: String!
+  name: String!
 }
