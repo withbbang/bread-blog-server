@@ -70,4 +70,21 @@ const uploadS3 = async (stream, name) => {
   }
 };
 
-module.exports = { authorizeWithGithub, uploadStream, uploadS3 };
+const deleteS3 = async (fileName) => {
+  try {
+    s3.deleteObject(
+      {
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: fileName,
+      },
+      (err, data) => {
+        if (err) throw err;
+        return data;
+      },
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = { authorizeWithGithub, uploadStream, uploadS3, deleteS3 };

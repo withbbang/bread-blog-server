@@ -1,7 +1,8 @@
-const { authorizeWithGithub, uploadS3 } = require("../lib");
+const { authorizeWithGithub, uploadS3, deleteS3 } = require("../lib");
 const fetch = require("node-fetch");
 const { uploadStream } = require("../lib");
 const path = require("path");
+const { ObjectId } = require("bson");
 
 module.exports = {
   async postPhoto(parent, args, { db, currentUser, pubsub }) {
@@ -34,6 +35,22 @@ module.exports = {
       pubsub.publish("photo-added", { newPhoto });
 
       return newPhoto;
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+  async deletePhoto(parent, args, { db, currentUser, pubsub }) {
+    try {
+      if (!currentUser) throw new Error("Only an authorized user can delete a photo");
+
+      const _id = ObjectId(args.id);
+      const { name } = await db.collection("photos").findOne({ _id });
+
+      await db.collection("photos").deleteOne({ _id });
+      const data = await deleteS3(name);
+
+      return `Delete ${name} success`;
     } catch (e) {
       console.log(e);
     }
