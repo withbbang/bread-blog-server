@@ -1,4 +1,4 @@
-const { authorizeWithGithub } = require("../lib");
+const { authorizeWithGithub, uploadS3 } = require("../lib");
 const fetch = require("node-fetch");
 const { uploadStream } = require("../lib");
 const path = require("path");
@@ -10,11 +10,18 @@ module.exports = {
       if (!currentUser) throw new Error("Only an authorized user can post a photo");
 
       const { name, category, description } = args.input;
-      const { createReadStream } = await args.input.file;
+      const { filename, createReadStream } = await args.input.file;
+      const ext = path.extname(filename);
+      const stream = createReadStream();
+
+      const fileName = `${Date.now()}_${name}${ext}`;
+
+      const url = await uploadS3(stream, fileName);
 
       // 2. 현재 사용자의 id와 사진을 저장.
       const newPhoto = {
-        name,
+        name: fileName,
+        url,
         description,
         category,
         userID: currentUser.githubLogin,
@@ -22,12 +29,7 @@ module.exports = {
       };
 
       // 3. 데이터베이스에 새로운 사진을 넣고, 반환되는 id 값을 받는다.
-      const { insertedId } = await db.collection("photos").insertOne(newPhoto);
-
-      let toPath = path.join(__dirname, "..", "photos", `${insertedId.str}.jpg`);
-      const stream = createReadStream();
-
-      await uploadStream(stream, toPath);
+      await db.collection("photos").insertOne(newPhoto);
 
       pubsub.publish("photo-added", { newPhoto });
 

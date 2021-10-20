@@ -16,7 +16,7 @@ const typeDefs = readFileSync("./typeDefs.graphql", "utf8");
 const resolvers = require("./resolvers");
 
 const { MongoClient } = require("mongodb");
-require("dotenv").config();
+const env = require("./env");
 
 // 동기처리 함수를 거치지 않을 시
 // You must `await server.start()` before calling `server.applyMiddleware()`
