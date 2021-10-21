@@ -2,6 +2,27 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const env = require("./env");
+const sgMail = require("@sendgrid/mail");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const msg = {
+  to: "test@example.com",
+  from: "bread@ruu.kr",
+  subject: "Sending with SendGrid is Fun",
+  text: "and easy to do anywhere, even with Node.js",
+  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+};
+
+sgMail
+  .send(msg)
+  .then((response) => {
+    console.log(response[0].statusCode);
+    console.log(response[0].headers);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 const requestGithubToken = (credentials) =>
   fetch("https://github.com/login/oauth/access_token", {
@@ -80,7 +101,7 @@ const deleteS3 = async (fileName) => {
       (err, data) => {
         if (err) throw err;
         return data;
-      },
+      }
     );
   } catch (err) {
     console.log(err);

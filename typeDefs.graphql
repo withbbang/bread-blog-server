@@ -44,6 +44,7 @@ type Query {
 }
 
 type Mutation {
+  createUser(email: String!): User!
   postPhoto(input: PostPhotoInput!): Photo!
   deletePhoto(id: String!): String
   githubAuth(code: String!): AuthPayload!
