@@ -3,26 +3,31 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 const env = require("./env");
 const sgMail = require("@sendgrid/mail");
+const { adjectives, nouns } = require("./word");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const msg = {
-  to: "test@example.com",
-  from: "bread@ruu.kr",
-  subject: "Sending with SendGrid is Fun",
-  text: "and easy to do anywhere, even with Node.js",
-  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+const generateSecret = () => {
+  const randomNumber = Math.floor(Math.random() * adjectives.length);
+  return `${adjectives[randomNumber]} ${nouns[randomNumber]}`;
 };
 
-sgMail
-  .send(msg)
-  .then((response) => {
-    console.log(response[0].statusCode);
-    console.log(response[0].headers);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+const sendMail = async (email, secretWord) => {
+  const msg = {
+    to: email,
+    from: "bread@ruu.kr",
+    subject: "Login Secret Word For Graphql-Tutorial",
+    // text: "and easy to do anywhere, even with Node.js",
+    html: `Hello! Your Login secret is <strong>${secretWord}</strong>.<br/>Copy and paste on the app/website to log in`,
+  };
+
+  try {
+    const response = await sgMail.send(msg);
+    console.log("response : ", response);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const requestGithubToken = (credentials) =>
   fetch("https://github.com/login/oauth/access_token", {
@@ -108,4 +113,4 @@ const deleteS3 = async (fileName) => {
   }
 };
 
-module.exports = { authorizeWithGithub, uploadStream, uploadS3, deleteS3 };
+module.exports = { authorizeWithGithub, uploadStream, uploadS3, deleteS3, generateSecret, sendMail };

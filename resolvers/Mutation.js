@@ -1,10 +1,67 @@
-const { authorizeWithGithub, uploadS3, deleteS3 } = require("../lib");
+const { authorizeWithGithub, uploadS3, deleteS3, sendMail, generateSecret } = require("../lib");
 const fetch = require("node-fetch");
 const { uploadStream } = require("../lib");
 const path = require("path");
 const { ObjectId } = require("bson");
 
 module.exports = {
+  async createUser(parent, args, { db, pubsub }) {
+    const {
+      input: { email, name },
+    } = args;
+    const user = await db.collection("users").findOne({ email });
+
+    if (user) throw new Error(`Already Exist ${email}!`);
+
+    const _user = {
+      email,
+      name,
+      isAdmin: "N",
+      created: new Date(),
+    };
+
+    // await db.collection("users").insertOne(_user);
+
+    return _user;
+  },
+
+  async requestLogin(parent, args, { db, pubsub }) {
+    try {
+      const { email } = args;
+      const user = await db.collection("users").findOne({ email });
+
+      if (!user) throw new Error(`Can't Find ${email} User`);
+
+      const secretWord = generateSecret();
+      await db.collection("users").updateOne({ email }, { $set: { loginSecret: secretWord } });
+
+      await sendMail(email, secretWord);
+
+      return {
+        name: user.name,
+        avatar: user.avatar,
+      };
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  async confirmLogin(parent, args, { db, pubsub }) {
+    try {
+      const { email, secretWord } = args;
+      const user = await db.collection("users").findOne({ email });
+
+      if (user.loginSecret === secretWord) {
+        await db.collection("users").updateOne({ email }, { $set: { loginSecret: "" } });
+        return user;
+      } else {
+        throw new Error("Wrong Secret Word");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
   async postPhoto(parent, args, { db, currentUser, pubsub }) {
     try {
       // 1. 컨텍스트에 사용자가 존재하지 않으면 에러

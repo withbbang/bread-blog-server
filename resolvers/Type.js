@@ -18,14 +18,14 @@ module.exports = {
     //     .map(userID => metaData.users.find(u => u.githubLogin === userID))
   },
   User: {
-    postedPhotos: (parent) => {
-      return metaData.photos.filter((p) => p.githubUser === parent.githubLogin);
-    },
-    inPhotos: (parent) =>
-      metaData.tags
-        .filter((tag) => tag.userID === parent.id)
-        .map((tag) => tag.photoID)
-        .map((photoID) => metaData.photos.find((p) => p.id === photoID)),
+    // postedPhotos: (parent) => {
+    //   return metaData.photos.filter((p) => p.githubUser === parent.githubLogin);
+    // },
+    // inPhotos: (parent) =>
+    //   metaData.tags
+    //     .filter((tag) => tag.userID === parent.id)
+    //     .map((tag) => tag.photoID)
+    //     .map((photoID) => metaData.photos.find((p) => p.id === photoID)),
   },
   DateTime: new GraphQLScalarType({
     name: "DateTime",

@@ -11,11 +11,13 @@ enum PhotoCategory {
 }
 
 type User {
-  githubLogin: ID!
-  name: String
+  id: ID!
+  email: String!
+  name: String!
   avatar: String
-  postedPhotos: [Photo!]!
-  inPhotos: [Photo!]!
+  loginSecret: String
+  isAdmin: String!
+  created: DateTime!
 }
 
 type Photo {
@@ -44,7 +46,9 @@ type Query {
 }
 
 type Mutation {
-  createUser(email: String!): User!
+  createUser(input: CreateUserInput!): User!
+  requestLogin(email: String!): User!
+  confirmLogin(input: ConfirmLoginInput!): User!
   postPhoto(input: PostPhotoInput!): Photo!
   deletePhoto(id: String!): String
   githubAuth(code: String!): AuthPayload!
@@ -69,4 +73,14 @@ input PostPhotoInput {
 input DeleteFakeUserInput {
   githubLogin: String!
   name: String!
+}
+
+input CreateUserInput {
+  email: String!
+  name: String!
+}
+
+input ConfirmLoginInput {
+  email: String!
+  secretWord: String!
 }
