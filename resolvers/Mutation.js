@@ -6,23 +6,45 @@ const { ObjectId } = require("bson");
 
 module.exports = {
   async createUser(parent, args, { db, pubsub }) {
-    const {
-      input: { email, name },
-    } = args;
-    const user = await db.collection("users").findOne({ email });
+    try {
+      const {
+        input: { email, name },
+      } = args;
+      const user = await db.collection("users").findOne({ email });
 
-    if (user) throw new Error(`Already Exist ${email}!`);
+      if (user) throw new Error(`Already Exists ${email} User!`);
 
-    const _user = {
-      email,
-      name,
-      isAdmin: "N",
-      created: new Date(),
-    };
+      const _user = {
+        email,
+        name,
+        isAdmin: "N",
+        created: new Date(),
+      };
 
-    // await db.collection("users").insertOne(_user);
+      await db.collection("users").insertOne(_user);
 
-    return _user;
+      return _user;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  },
+
+  async tempDeleteUser(parent, args, { db, pubsub }) {
+    try {
+      const { email } = args;
+
+      const user = await db.collection("users").findOne({ email });
+
+      if (!user) throw new Error(`Can't not find ${email} User`);
+
+      const { deletedCount } = await db.collection("users").deleteOne({ email });
+
+      return deletedCount;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
 
   async requestLogin(parent, args, { db, pubsub }) {
@@ -39,16 +61,20 @@ module.exports = {
 
       return {
         name: user.name,
+        email,
         avatar: user.avatar,
       };
     } catch (err) {
       console.log(err);
+      return err;
     }
   },
 
   async confirmLogin(parent, args, { db, pubsub }) {
     try {
-      const { email, secretWord } = args;
+      const {
+        input: { email, secretWord },
+      } = args;
       const user = await db.collection("users").findOne({ email });
 
       if (user.loginSecret === secretWord) {
@@ -59,6 +85,7 @@ module.exports = {
       }
     } catch (err) {
       console.log(err);
+      return err;
     }
   },
 

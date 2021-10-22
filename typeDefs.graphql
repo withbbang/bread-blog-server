@@ -47,6 +47,7 @@ type Query {
 
 type Mutation {
   createUser(input: CreateUserInput!): User!
+  tempDeleteUser(email: String!): String!
   requestLogin(email: String!): User!
   confirmLogin(input: ConfirmLoginInput!): User!
   postPhoto(input: PostPhotoInput!): Photo!

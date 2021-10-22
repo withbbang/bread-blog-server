@@ -23,9 +23,10 @@ const sendMail = async (email, secretWord) => {
 
   try {
     const response = await sgMail.send(msg);
-    console.log("response : ", response);
+    console.log(response);
   } catch (err) {
     console.log(err);
+    throw new Error(err);
   }
 };
 
@@ -106,7 +107,7 @@ const deleteS3 = async (fileName) => {
       (err, data) => {
         if (err) throw err;
         return data;
-      }
+      },
     );
   } catch (err) {
     console.log(err);
