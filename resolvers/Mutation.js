@@ -14,8 +14,13 @@ const { ObjectId } = require("bson");
 
 module.exports = {
   async testRequest(parent, args, { currentUser, db, pubsub }) {
-    const { name } = currentUser;
-    return `confirmRequest works well. result is ${name}`;
+    try {
+      const { name } = currentUser;
+      return `confirmRequest works well. result is ${name}`;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
 
   async createUser(parent, args, { db, pubsub }) {
