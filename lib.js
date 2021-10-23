@@ -145,4 +145,14 @@ const deleteS3 = async (fileName) => {
   }
 };
 
-module.exports = { authorizeWithGithub, uploadStream, uploadS3, deleteS3, generateSecret, sendMail, generateAccessToken, generateRefreshToken, decodeToken };
+module.exports = {
+  authorizeWithGithub,
+  uploadStream,
+  uploadS3,
+  deleteS3,
+  generateSecret,
+  sendMail,
+  generateAccessToken,
+  generateRefreshToken,
+  decodeToken,
+};

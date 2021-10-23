@@ -1,4 +1,12 @@
-const { authorizeWithGithub, uploadS3, deleteS3, sendMail, generateSecret, generateAccessToken, generateRefreshToken } = require("../lib");
+const {
+  authorizeWithGithub,
+  uploadS3,
+  deleteS3,
+  sendMail,
+  generateSecret,
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../lib");
 const fetch = require("node-fetch");
 const { confirmRequest } = require("../middleware/confirmRequest");
 const path = require("path");

@@ -10,7 +10,10 @@ module.exports = {
   Upload: GraphQLUpload,
   Photo: {
     id: (parent) => parent.id || parent._id,
-    url: (parent) => (parent.url ? parent.url : "https://user-images.githubusercontent.com/43382559/93982741-92fdb180-fdbc-11ea-93ea-12cbbe030a37.png"),
+    url: (parent) =>
+      parent.url
+        ? parent.url
+        : "https://user-images.githubusercontent.com/43382559/93982741-92fdb180-fdbc-11ea-93ea-12cbbe030a37.png",
     postedBy: (parent, args, { db }) => db.collection("users").findOne({ githubLogin: parent.userID }),
     // taggedUsers: parent => metaData.tags
     //     .filter(tag => tag.photoID === parent.id)

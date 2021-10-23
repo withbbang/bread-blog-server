@@ -53,8 +53,10 @@ const env = require("./env");
     // 컨텍스트 : 모든 요청에 들어가는 인자 ex) db정보, subscription 엔진 등
     context: async ({ req, connection }) => {
       const token = req ? req.headers.authorization : connection.context.Authorization;
-      const currentUser = await db.collection("users").findOne(decodeToken(token));
-      return { db, currentUser, pubsub };
+      if (token !== "null" && token) {
+        const currentUser = await db.collection("users").findOne(decodeToken(token));
+        return { db, currentUser, pubsub };
+      } else return { db, pubsub };
     },
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
