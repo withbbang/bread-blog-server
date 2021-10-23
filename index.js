@@ -12,6 +12,7 @@ const { createComplexityLimitRule } = require("graphql-validation-complexity");
 const { graphqlUploadExpress } = require("graphql-upload");
 const path = require("path");
 
+const { decodeToken } = require("./lib");
 const typeDefs = readFileSync("./typeDefs.graphql", "utf8");
 const resolvers = require("./resolvers");
 
@@ -51,8 +52,8 @@ const env = require("./env");
     ],
     // 컨텍스트 : 모든 요청에 들어가는 인자 ex) db정보, subscription 엔진 등
     context: async ({ req, connection }) => {
-      const githubToken = req ? req.headers.authorization : connection.context.Authorization;
-      const currentUser = await db.collection("users").findOne({ githubToken });
+      const token = req ? req.headers.authorization : connection.context.Authorization;
+      const currentUser = await db.collection("users").findOne(decodeToken(token));
       return { db, currentUser, pubsub };
     },
     plugins: [
@@ -105,7 +106,7 @@ const env = require("./env");
         }
       },
     },
-    { server: httpServer, path: server.graphqlPath },
+    { server: httpServer, path: server.graphqlPath }
   );
 
   // 서버 구동 수정

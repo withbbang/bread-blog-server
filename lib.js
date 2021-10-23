@@ -4,6 +4,8 @@ const AWS = require("aws-sdk");
 const env = require("./env");
 const sgMail = require("@sendgrid/mail");
 const { adjectives, nouns } = require("./word");
+const jwt = require("jsonwebtoken");
+const { ObjectId } = require("bson");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -28,6 +30,35 @@ const sendMail = async (email, secretWord) => {
     console.log(err);
     throw new Error(err);
   }
+};
+
+const generateAccessToken = (id) => {
+  return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
+    // expiresIn: "1h",
+  });
+};
+
+const generateRefreshToken = (id) => {
+  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "180 days",
+  });
+};
+
+const decodeToken = (token) => {
+  try {
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return ObjectId(user.id);
+  } catch (err) {
+    if (err.name === "TokenExpiredError") throw new Error("Expired Token. Please Login Again");
+    else {
+      console.log(err);
+      throw new Error(err);
+    }
+  }
+};
+
+const resetToken = (refreshToken) => {
+  return;
 };
 
 const requestGithubToken = (credentials) =>
@@ -107,11 +138,11 @@ const deleteS3 = async (fileName) => {
       (err, data) => {
         if (err) throw err;
         return data;
-      },
+      }
     );
   } catch (err) {
     console.log(err);
   }
 };
 
-module.exports = { authorizeWithGithub, uploadStream, uploadS3, deleteS3, generateSecret, sendMail };
+module.exports = { authorizeWithGithub, uploadStream, uploadS3, deleteS3, generateSecret, sendMail, generateAccessToken, generateRefreshToken, decodeToken };

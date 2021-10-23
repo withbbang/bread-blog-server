@@ -1,10 +1,15 @@
-const { authorizeWithGithub, uploadS3, deleteS3, sendMail, generateSecret } = require("../lib");
+const { authorizeWithGithub, uploadS3, deleteS3, sendMail, generateSecret, generateAccessToken, generateRefreshToken } = require("../lib");
 const fetch = require("node-fetch");
-const { uploadStream } = require("../lib");
+const { confirmRequest } = require("../middleware/confirmRequest");
 const path = require("path");
 const { ObjectId } = require("bson");
 
 module.exports = {
+  async testRequest(parent, args, { currentUser, db, pubsub }) {
+    const { name } = currentUser;
+    return `confirmRequest works well. result is ${name}`;
+  },
+
   async createUser(parent, args, { db, pubsub }) {
     try {
       const {
@@ -77,9 +82,15 @@ module.exports = {
       } = args;
       const user = await db.collection("users").findOne({ email });
 
+      const token = generateAccessToken(user._id);
+      const refreshToken = generateRefreshToken(user._id);
+
       if (user.loginSecret === secretWord) {
         await db.collection("users").updateOne({ email }, { $set: { loginSecret: "" } });
-        return user;
+        return {
+          token,
+          refreshToken,
+        };
       } else {
         throw new Error("Wrong Secret Word");
       }

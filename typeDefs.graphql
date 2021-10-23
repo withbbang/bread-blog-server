@@ -36,6 +36,11 @@ type AuthPayload {
   user: User!
 }
 
+type TokenObject {
+  token: String!
+  refreshToken: String!
+}
+
 type Query {
   totalPhotos: Int!
   allPhotos: [Photo!]!
@@ -49,7 +54,8 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   tempDeleteUser(email: String!): String!
   requestLogin(email: String!): User!
-  confirmLogin(input: ConfirmLoginInput!): User!
+  confirmLogin(input: ConfirmLoginInput!): TokenObject!
+  testRequest(token: String!): String!
   postPhoto(input: PostPhotoInput!): Photo!
   deletePhoto(id: String!): String
   githubAuth(code: String!): AuthPayload!
