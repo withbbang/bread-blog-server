@@ -65,6 +65,19 @@ module.exports = {
     }
   },
 
+  async tempUpdateUser(parent, args, { db, pubsub }) {
+    try {
+      const { id } = args;
+      const _id = ObjectId(id);
+      const result = await db.collection("users").updateOne({ _id }, { $set: { isAdmin: "Y" } });
+
+      return result.modifiedCount;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  },
+
   async requestLogin(parent, args, { db, pubsub }) {
     try {
       const { email } = args;
@@ -95,6 +108,7 @@ module.exports = {
       } = args;
       const user = await db.collection("users").findOne({ email });
 
+      console.log(user._id);
       const token = generateAccessToken(user._id);
       const refreshToken = generateRefreshToken(user._id);
 
@@ -105,7 +119,7 @@ module.exports = {
           refreshToken,
         };
       } else {
-        throw new Error("Wrong Secret Word");
+        throw new Error("Wrong Secret Words");
       }
     } catch (err) {
       console.log(err);

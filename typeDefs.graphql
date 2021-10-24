@@ -53,6 +53,7 @@ type Query {
 type Mutation {
   createUser(input: CreateUserInput!): User!
   tempDeleteUser(email: String!): String!
+  tempUpdateUser(id: String!): String!
   requestLogin(email: String!): User!
   confirmLogin(input: ConfirmLoginInput!): TokenObject!
   testRequest(token: String!): String!
