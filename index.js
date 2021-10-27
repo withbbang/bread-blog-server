@@ -1,6 +1,7 @@
 const { ApolloServer } = require("apollo-server-express");
 const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
-const expressPlayground = require("graphql-playground-middleware-express").default;
+const expressPlayground =
+  require("graphql-playground-middleware-express").default;
 const express = require("express");
 const http = require("http");
 const { readFileSync } = require("fs");
@@ -34,7 +35,10 @@ const env = require("./env");
   const pubsub = new PubSub();
 
   // 몽고디비 클라이언트 인스턴스 생성
-  const client = await MongoClient.connect(MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = await MongoClient.connect(MONGO_DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
   const db = client.db();
 
   // 스키마 정보 합치기
@@ -52,9 +56,13 @@ const env = require("./env");
     ],
     // 컨텍스트 : 모든 요청에 들어가는 인자 ex) db정보, subscription 엔진 등
     context: async ({ req, connection }) => {
-      const token = req ? req.headers.authorization : connection.context.Authorization;
+      const token = req
+        ? req.headers.authorization
+        : connection.context.Authorization;
       if (token !== "null" && token) {
-        const currentUser = await db.collection("users").findOne(decodeToken(token));
+        const currentUser = await db
+          .collection("users")
+          .findOne(decodeToken(token));
         return { db, currentUser, pubsub };
       } else return { db, pubsub };
     },
@@ -87,7 +95,10 @@ const env = require("./env");
     paht: "/",
   });
 
-  app.use("/img/photos", express.static(path.join(__dirname, "assets", "photos")));
+  app.use(
+    "/img/photos",
+    express.static(path.join(__dirname, "assets", "photos")),
+  );
 
   // ws용 subscription server 인스턴스 생성
   const subscriptionServer = SubscriptionServer.create(
@@ -101,14 +112,16 @@ const env = require("./env");
       async onConnect(connectionParams, WebSocket, ConnectionContext) {
         // Apollo docs 확인하고 ws를 통해 auth 전달하는 법 구현
         if (connectionParams.authorization) {
-          const currentUser = await db.collection("users").findOne({ githubToken: connectionParams.authorization });
+          const currentUser = await db
+            .collection("users")
+            .findOne({ githubToken: connectionParams.authorization });
           return { currentUser, pubsub };
         } else {
           return { pubsub };
         }
       },
     },
-    { server: httpServer, path: server.graphqlPath }
+    { server: httpServer, path: server.graphqlPath },
   );
 
   // 서버 구동 수정

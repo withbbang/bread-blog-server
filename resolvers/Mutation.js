@@ -56,7 +56,9 @@ module.exports = {
 
       if (!user) throw new Error(`Can't not find ${email} User`);
 
-      const { deletedCount } = await db.collection("users").deleteOne({ email });
+      const { deletedCount } = await db
+        .collection("users")
+        .deleteOne({ email });
 
       return deletedCount;
     } catch (err) {
@@ -67,9 +69,13 @@ module.exports = {
 
   async tempUpdateUser(parent, args, { db, pubsub }) {
     try {
-      const { id } = args;
+      const {
+        input: { id, avatar },
+      } = args;
       const _id = ObjectId(id);
-      const result = await db.collection("users").updateOne({ _id }, { $set: { isAdmin: "Y" } });
+      const result = await db
+        .collection("users")
+        .updateOne({ _id }, { $set: { isAdmin: "Y", avatar } });
 
       return result.modifiedCount;
     } catch (err) {
@@ -86,7 +92,9 @@ module.exports = {
       if (!user) throw new Error(`Can't Find ${email} User`);
 
       const secretWord = generateSecret();
-      await db.collection("users").updateOne({ email }, { $set: { loginSecret: secretWord } });
+      await db
+        .collection("users")
+        .updateOne({ email }, { $set: { loginSecret: secretWord } });
 
       await sendMail(email, secretWord);
 
@@ -113,7 +121,9 @@ module.exports = {
       const refreshToken = generateRefreshToken(user._id);
 
       if (user.loginSecret === secretWord) {
-        await db.collection("users").updateOne({ email }, { $set: { loginSecret: "" } });
+        await db
+          .collection("users")
+          .updateOne({ email }, { $set: { loginSecret: "" } });
         return {
           token,
           refreshToken,
@@ -130,7 +140,8 @@ module.exports = {
   async postPhoto(parent, args, { db, currentUser, pubsub }) {
     try {
       // 1. 컨텍스트에 사용자가 존재하지 않으면 에러
-      if (!currentUser) throw new Error("Only an authorized user can post a photo");
+      if (!currentUser)
+        throw new Error("Only an authorized user can post a photo");
 
       const { name, category, description } = args.input;
       const { filename, createReadStream } = await args.input.file;
@@ -164,7 +175,8 @@ module.exports = {
 
   async deletePhoto(parent, { id }, { db, currentUser, pubsub }) {
     try {
-      if (!currentUser) throw new Error("Only an authorized user can delete a photo");
+      if (!currentUser)
+        throw new Error("Only an authorized user can delete a photo");
 
       const _id = ObjectId(id);
       const { name } = await db.collection("photos").findOne({ _id });
@@ -181,11 +193,12 @@ module.exports = {
   async githubAuth(parent, { code }, { db }) {
     try {
       // 1. 깃헙에서 데이터를 받아 온다.
-      let { message, access_token, avatar_url, login, name } = await authorizeWithGithub({
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        code,
-      });
+      let { message, access_token, avatar_url, login, name } =
+        await authorizeWithGithub({
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET,
+          code,
+        });
 
       // 2. 메세지 있을 시 오류
       if (message) {
@@ -201,7 +214,9 @@ module.exports = {
       };
 
       // 4. 데이터를 새로 추가하거나 이미 있는 데이터를 업데이트 한다.
-      await db.collection("users").replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
+      await db
+        .collection("users")
+        .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
       const user = await db.collection("users").findOne({ githubLogin: login });
 
       // 5. 사용자 데이터와 토큰을 반환한다.
@@ -214,9 +229,12 @@ module.exports = {
   async addFakeUsers(parent, { count }, { db, currentUser, pubsub }) {
     try {
       // 컨텍스트에 사용자가 존재하지 않으면 에러
-      if (!currentUser) throw new Error("Only an authorized user can add fake users");
+      if (!currentUser)
+        throw new Error("Only an authorized user can add fake users");
 
-      const { results } = await fetch(`https://randomuser.me/api/?results=${count}`)
+      const { results } = await fetch(
+        `https://randomuser.me/api/?results=${count}`,
+      )
         .then((res) => res.json())
         .catch((error) => {
           throw new Error(error);
@@ -242,7 +260,8 @@ module.exports = {
 
   async deleteFakeUser(parent, args, { db, currentUser, pubsub }) {
     try {
-      if (!currentUser) throw new Error("Only an authorized user can delete a photo");
+      if (!currentUser)
+        throw new Error("Only an authorized user can delete a photo");
 
       const { githubLogin, name } = args.input;
       await db.collection("users").deleteOne({ githubLogin });
@@ -257,7 +276,8 @@ module.exports = {
     try {
       const user = await db.collection("users").findOne({ githubLogin });
 
-      if (!user) throw new Error(`Cannot find user with githubLogin "${githubLogin}"`);
+      if (!user)
+        throw new Error(`Cannot find user with githubLogin "${githubLogin}"`);
 
       return {
         token: user.githubToken,
