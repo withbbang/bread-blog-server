@@ -20,6 +20,7 @@ const resolvers = require("./resolvers");
 
 const { MongoClient } = require("mongodb");
 const env = require("./env");
+const port = 4000;
 
 // 동기처리 함수를 거치지 않을 시
 // You must `await server.start()` before calling `server.applyMiddleware()`
@@ -127,6 +128,8 @@ const env = require("./env");
   );
 
   // 서버 구동 수정
-  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+  await new Promise((resolve) =>
+    httpServer.listen(process.env.PORT || port, resolve),
+  );
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 })();
