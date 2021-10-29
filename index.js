@@ -83,8 +83,8 @@ const port = 4000;
   });
 
   // 홈 라우트 생성
-  app.get("/", (req, res) => res.end("Welcome to PhotoShare API"));
-  app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
+  // app.get("/", (req, res) => res.end("Welcome to PhotoShare API"));
+  // app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
   app.use(graphqlUploadExpress());
   app.use(cors());
