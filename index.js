@@ -124,7 +124,7 @@ const port = 4000;
         }
       },
     },
-    { server: httpServer, path: server.graphqlPath },
+    { server: httpServer },
   );
 
   // 서버 구동 수정
