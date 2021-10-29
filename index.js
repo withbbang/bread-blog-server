@@ -4,6 +4,7 @@ const expressPlayground =
   require("graphql-playground-middleware-express").default;
 const express = require("express");
 const http = require("http");
+const cors = require("cors");
 const { readFileSync } = require("fs");
 const { PubSub } = require("graphql-subscriptions");
 const { execute, subscribe } = require("graphql");
@@ -85,6 +86,7 @@ const env = require("./env");
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
   app.use(graphqlUploadExpress());
+  app.use(cors());
 
   // 서버구동
   await server.start();
