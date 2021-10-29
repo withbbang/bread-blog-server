@@ -95,7 +95,7 @@ const port = 4000;
   // 미들웨어가 같은 경로에 마운트되도록 한다.
   server.applyMiddleware({
     app,
-    paht: "/",
+    path: "/",
   });
 
   app.use(
