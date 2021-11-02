@@ -98,10 +98,10 @@ const port = 4000;
     path: "/",
   });
 
-  app.use(
-    "/img/photos",
-    express.static(path.join(__dirname, "assets", "photos")),
-  );
+  // app.use(
+  //   "/img/photos",
+  //   express.static(path.join(__dirname, "assets", "photos")),
+  // );
 
   // ws용 subscription server 인스턴스 생성
   const subscriptionServer = SubscriptionServer.create(
@@ -117,7 +117,7 @@ const port = 4000;
         if (connectionParams.authorization) {
           const currentUser = await db
             .collection("users")
-            .findOne({ githubToken: connectionParams.authorization });
+            .findOne(decodeToken(connectionParams.authorization));
           return { currentUser, pubsub };
         } else {
           return { pubsub };

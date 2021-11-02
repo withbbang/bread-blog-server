@@ -49,7 +49,8 @@ const decodeToken = (token) => {
     const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     return ObjectId(user.id);
   } catch (err) {
-    if (err.name === "TokenExpiredError") throw new Error("Expired Token. Please Login Again");
+    if (err.name === "TokenExpiredError")
+      throw new Error("Expired Token. Please Login Again");
     else {
       console.log(err);
       throw new Error(err);
@@ -138,12 +139,27 @@ const deleteS3 = async (fileName) => {
       (err, data) => {
         if (err) throw err;
         return data;
-      }
+      },
     );
   } catch (err) {
     console.log(err);
   }
 };
+
+function jsonToUrlEncoded(s) {
+  return encodeURIComponent(s)
+    .replace(/\%0(?:D|d)(?=\%0(?:A|a))\%0(A|a)/g, "&")
+    .replace(/\%0(?:D|d)/g, "&")
+    .replace(/\%0(?:A|a)/g, "&")
+    .replace(/\&/g, "%0D%0A")
+    .replace(/\%20/g, " ");
+}
+
+// function decode(s) {
+// 	return decodeURIComponent(s.replace(/\ /g, '%20'))
+// 		.replace(/\r\n/g, '\n')
+
+// }
 
 module.exports = {
   authorizeWithGithub,
@@ -155,4 +171,6 @@ module.exports = {
   generateAccessToken,
   generateRefreshToken,
   decodeToken,
+  jsonToUrlEncoded,
+  // decode,
 };
