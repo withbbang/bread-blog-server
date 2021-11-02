@@ -125,6 +125,8 @@ const port = 4000;
       },
     },
     { server: httpServer },
+    // path를 추가할 경우 ws 요청이 www.domain.com/path 로 감
+    // { server: httpServer, path: server.graphqlPath },
   );
 
   // 서버 구동 수정

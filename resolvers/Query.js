@@ -11,7 +11,6 @@ module.exports = {
     // subscribe 호출 publish 첫번째 인자값으로 이벤트 함수명, 두번째 인자값으로 콜백함수
     pubsub.publish("test", {
       test: async () => {
-        console.log("visited?");
         await sendKakao();
         return "test";
       },
