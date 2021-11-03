@@ -37,7 +37,7 @@ const port = 4000;
       origin:
         process.env.NODE_ENV === "development"
           ? "http://localhost:3000"
-          : "https://withbbang.github.io/bread-blog",
+          : "https://withbbang.github.io",
       credentials: true,
     }),
   );
@@ -112,7 +112,7 @@ const port = 4000;
       origin:
         process.env.NODE_ENV === "development"
           ? "http://localhost:3000"
-          : "https://withbbang.github.io/bread-blog",
+          : "https://withbbang.github.io",
       credentials: true,
     },
   });
