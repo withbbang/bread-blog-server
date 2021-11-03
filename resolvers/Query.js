@@ -1,4 +1,5 @@
 const { sendKakao } = require("../kakao");
+const { ObjectId } = require("bson");
 
 module.exports = {
   totalPhotos: async (parent, args, { db }) =>
@@ -18,6 +19,23 @@ module.exports = {
       },
     });
     return currentUser;
+  },
+  getVisitor: async (parent, args, { db }) => {
+    try {
+      const _id = ObjectId("61828d63ddc15fe451b47b91");
+      const { totalCount, todayCount } = await db
+        .collection("visitors")
+        .findOne({ _id });
+
+      //TODO: todayCount 자정 지나면 0으로 갱신되게 하기
+      return {
+        totalCount,
+        todayCount,
+      };
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
   test: (parent, args, { db, pubsub }) => {
     pubsub.publish("test", {

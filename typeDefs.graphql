@@ -10,7 +10,8 @@ enum PhotoCategory {
   GRAPHIC
 }
 
-type Visitors {
+type Visitor {
+  id: ID!
   totalCount: Int!
   todayCount: Int!
 }
@@ -53,6 +54,7 @@ type Query {
   allUsers: [User!]!
   me: User
   test: String!
+  getVisitor: Visitor!
 }
 
 type Mutation {
@@ -68,7 +70,7 @@ type Mutation {
   addFakeUsers(count: Int = 1): [User!]!
   deleteFakeUser(input: DeleteFakeUserInput!): String
   fakeUserAuth(githubLogin: ID!): AuthPayload!
-  setVisitors(cookies: String): Visitors!
+  setVisitor(cookies: String): Visitor!
 }
 
 type Subscription {

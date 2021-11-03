@@ -14,7 +14,8 @@ module.exports = {
       parent.url
         ? parent.url
         : "https://user-images.githubusercontent.com/43382559/93982741-92fdb180-fdbc-11ea-93ea-12cbbe030a37.png",
-    postedBy: (parent, args, { db }) => db.collection("users").findOne({ githubLogin: parent.userID }),
+    postedBy: (parent, args, { db }) =>
+      db.collection("users").findOne({ githubLogin: parent.userID }),
     // taggedUsers: parent => metaData.tags
     //     .filter(tag => tag.photoID === parent.id)
     //     .map(tag => tag.userID)
@@ -37,5 +38,7 @@ module.exports = {
     serialize: (value) => new Date(value).toISOString(),
     parseLiteral: (ast) => ast.value,
   }),
-  // Upload: GraphQLUpload,
+  Visitor: {
+    id: (parent) => parent[0]._id || parent[0]._id,
+  },
 };

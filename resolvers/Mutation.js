@@ -288,9 +288,29 @@ module.exports = {
     }
   },
 
-  async setVisitors(parent, args, { db, cookies, pubsub }) {
+  async setVisitor(parent, args, { db, cookies, pubsub }) {
     try {
       const visitCount = cookies.visitCount;
+
+      if (visitCount === "Y") {
+        const _id = ObjectId("61828d63ddc15fe451b47b91");
+        const { totalCount, todayCount } = await db
+          .collection("visitors")
+          .findOne({ _id });
+
+        const { modifiedCount } = await db
+          .collection("visitors")
+          .updateOne(
+            { _id },
+            {
+              $set: { totalCount: totalCount + 1, todayCount: todayCount + 1 },
+            },
+          );
+
+        return modifiedCount;
+      } else {
+        return "";
+      }
     } catch (err) {
       console.log(err);
       return err;

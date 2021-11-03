@@ -88,7 +88,7 @@ const port = 4000;
           .collection("users")
           .findOne(decodeToken(token));
         return { db, currentUser, cookies, pubsub };
-      } else return { db, pubsub };
+      } else return { db, cookies, pubsub };
     },
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
