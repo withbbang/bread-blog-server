@@ -288,5 +288,12 @@ module.exports = {
     }
   },
 
-  async setVisitors(parent, args, { currentUser, db, pubsub }) {},
+  async setVisitors(parent, args, { db, cookies, pubsub }) {
+    try {
+      const visitCount = cookies.visitCount;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  },
 };
