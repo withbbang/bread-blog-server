@@ -287,4 +287,6 @@ module.exports = {
       console.log(e);
     }
   },
+
+  async setVisitors(parent, args, { currentUser, db, pubsub }) {},
 };

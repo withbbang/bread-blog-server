@@ -12,6 +12,7 @@ const { SubscriptionServer } = require("subscriptions-transport-ws");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 const { createComplexityLimitRule } = require("graphql-validation-complexity");
 const { graphqlUploadExpress } = require("graphql-upload");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const { decodeToken } = require("./lib");
@@ -28,6 +29,19 @@ const port = 4000;
 (async function startApolloServer() {
   // 익스프레스 앱 생성
   const app = express();
+
+  app.use(graphqlUploadExpress());
+  app.use(cookieParser());
+  app.use(
+    cors({
+      origin:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000"
+          : "https://withbbang.github.io/bread-blog",
+      credentials: true,
+    }),
+  );
+
   // httpServer로 app 다시 생성
   const httpServer = http.createServer(app);
   // 몽고디비 호스트 정보
@@ -58,6 +72,7 @@ const port = 4000;
     ],
     // 컨텍스트 : 모든 요청에 들어가는 인자 ex) db정보, subscription 엔진 등
     context: async ({ req, connection }) => {
+      console.log(req.cookies);
       const token = req
         ? req.headers.authorization
         : connection.context.Authorization;
@@ -83,11 +98,8 @@ const port = 4000;
   });
 
   // 홈 라우트 생성
-  app.get("/", (req, res) => res.end("Welcome to PhotoShare API"));
+  app.get("/", (req, res) => expressPlayground({ endpoint: "/" }));
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
-
-  app.use(graphqlUploadExpress());
-  app.use(cors());
 
   // 서버구동
   await server.start();
@@ -96,6 +108,13 @@ const port = 4000;
   server.applyMiddleware({
     app,
     path: "/",
+    cors: {
+      origin:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000"
+          : "https://withbbang.github.io/bread-blog",
+      credentials: true,
+    },
   });
 
   // app.use(
