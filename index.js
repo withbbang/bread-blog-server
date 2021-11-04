@@ -118,7 +118,7 @@ const port = 4000;
   // 미들웨어가 같은 경로에 마운트되도록 한다.
   server.applyMiddleware({
     app,
-    path: "/",
+    path: "/graphql",
     cors: {
       /**
        * cors 통신 할 때 쿠키가 전달될 수 있도록 설정하는 옵션값들
