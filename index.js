@@ -82,7 +82,7 @@ const port = 4000;
     ],
     // 컨텍스트 : 모든 요청에 들어가는 인자 ex) db정보, subscription 엔진 등
     context: async ({ req, connection }) => {
-      console.log(req.cookies);
+      console.log(req);
       const token = req
         ? req.headers.authorization
         : connection.context.Authorization;
