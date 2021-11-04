@@ -27,7 +27,6 @@ module.exports = {
         .collection("visitors")
         .findOne({ _id });
 
-      //TODO: todayCount 자정 지나면 0으로 갱신되게 하기
       return {
         totalCount,
         todayCount,

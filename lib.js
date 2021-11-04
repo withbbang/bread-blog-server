@@ -146,6 +146,7 @@ const deleteS3 = async (fileName) => {
   }
 };
 
+// convert from json to x-www-form-urlencoded
 function jsonToUrlEncoded(s) {
   return encodeURIComponent(s)
     .replace(/\%0(?:D|d)(?=\%0(?:A|a))\%0(A|a)/g, "&")
@@ -158,7 +159,6 @@ function jsonToUrlEncoded(s) {
 // function decode(s) {
 // 	return decodeURIComponent(s.replace(/\ /g, '%20'))
 // 		.replace(/\r\n/g, '\n')
-
 // }
 
 module.exports = {

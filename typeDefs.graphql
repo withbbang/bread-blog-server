@@ -70,7 +70,7 @@ type Mutation {
   addFakeUsers(count: Int = 1): [User!]!
   deleteFakeUser(input: DeleteFakeUserInput!): String
   fakeUserAuth(githubLogin: ID!): AuthPayload!
-  setVisitor(cookies: String): Visitor!
+  setVisitor: String
 }
 
 type Subscription {

@@ -116,7 +116,6 @@ module.exports = {
       } = args;
       const user = await db.collection("users").findOne({ email });
 
-      console.log(user._id);
       const token = generateAccessToken(user._id);
       const refreshToken = generateRefreshToken(user._id);
 
@@ -298,18 +297,16 @@ module.exports = {
           .collection("visitors")
           .findOne({ _id });
 
-        const { modifiedCount } = await db
-          .collection("visitors")
-          .updateOne(
-            { _id },
-            {
-              $set: { totalCount: totalCount + 1, todayCount: todayCount + 1 },
-            },
-          );
+        const { modifiedCount } = await db.collection("visitors").updateOne(
+          { _id },
+          {
+            $set: { totalCount: totalCount + 1, todayCount: todayCount + 1 },
+          },
+        );
 
-        return modifiedCount;
+        return "count";
       } else {
-        return "";
+        return "no count";
       }
     } catch (err) {
       console.log(err);

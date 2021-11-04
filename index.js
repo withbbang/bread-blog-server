@@ -16,6 +16,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const { decodeToken } = require("./lib");
+const { initTodayVisitor } = require("./scheduler");
 const typeDefs = readFileSync("./typeDefs.graphql", "utf8");
 const resolvers = require("./resolvers");
 
@@ -63,6 +64,9 @@ const port = 4000;
   });
   const db = client.db();
 
+  // 오늘 방문자수 초기화
+  initTodayVisitor(db);
+
   // 스키마 정보 합치기
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -72,7 +76,7 @@ const port = 4000;
     schema,
     validationRules: [
       // 쿼리 코스트 계산 함수 -> 첫번째 인자값은 최대 쿼리 코스트 제한. 초과하면 에러.
-      createComplexityLimitRule(1000, {
+      createComplexityLimitRule(100000, {
         onCost: (cost) => console.log("query cost: ", cost),
       }),
     ],
@@ -118,7 +122,7 @@ const port = 4000;
     cors: {
       /**
        * cors 통신 할 때 쿠키가 전달될 수 있도록 설정하는 옵션값들
-       * 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
+       * 응답 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
        * 특정 주소로 설정함에 따라 통신도 하고 cookie 전달도 할 수 있게 함
        */
       origin:
