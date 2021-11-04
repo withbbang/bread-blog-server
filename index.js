@@ -40,7 +40,10 @@ const port = 4000;
        * 응답 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
        * 특정 주소로 설정함에 따라 통신도 하고 cookie 전달도 할 수 있게 함
        */
-      origin: process.env.NODE_ENV === "development" && "http://localhost:3000",
+      origin:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000"
+          : "https://withbbang.github.io",
       credentials: true,
     }),
   );
@@ -122,7 +125,10 @@ const port = 4000;
        * 응답 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
        * 특정 주소로 설정함에 따라 통신도 하고 cookie 전달도 할 수 있게 함
        */
-      origin: process.env.NODE_ENV === "development" && "http://localhost:3000",
+      origin:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000"
+          : "https://withbbang.github.io",
       credentials: true,
     },
   });
