@@ -155,10 +155,7 @@ const port = 4000;
 
   // 서버 구동 수정
   await new Promise((resolve) =>
-    httpServer.listen(
-      { port: process.env.PORT || port, cors: corsOption },
-      resolve,
-    ),
+    httpServer.listen(process.env.PORT || port, resolve),
   );
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 })();
