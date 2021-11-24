@@ -28,25 +28,25 @@ const port = 4000;
 // You must `await server.start()` before calling `server.applyMiddleware()`
 // 에러가 발생하므로 순차적으로 처리해야함
 (async function startApolloServer() {
+  const corsOption = {
+    /**
+     * cors 통신 할 때 쿠키가 전달될 수 있도록 설정하는 옵션값들
+     * 응답 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
+     * 특정 주소로 설정함에 따라 통신도 하고 cookie 전달도 할 수 있게 함
+     */
+    origin:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : "https://withbbang.github.io",
+    credentials: true,
+  };
+
   // 익스프레스 앱 생성
   const app = express();
 
   app.use(graphqlUploadExpress());
   app.use(cookieParser());
-  app.use(
-    cors({
-      /**
-       * cors 통신 할 때 쿠키가 전달될 수 있도록 설정하는 옵션값들
-       * 응답 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
-       * 특정 주소로 설정함에 따라 통신도 하고 cookie 전달도 할 수 있게 함
-       */
-      origin:
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3000"
-          : "https://withbbang.github.io",
-      credentials: true,
-    }),
-  );
+  app.use(cors(corsOption));
 
   // httpServer로 app 다시 생성
   const httpServer = https.createServer(app);
@@ -109,7 +109,7 @@ const port = 4000;
   });
 
   // 홈 라우트 생성
-  app.get("/", (req, res) => expressPlayground({ endpoint: "/" }));
+  app.get("/", (req, res) => res.end("Welcome to Bread-Blog API"));
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
   // 서버구동
@@ -118,19 +118,8 @@ const port = 4000;
   // 미들웨어가 같은 경로에 마운트되도록 한다.
   server.applyMiddleware({
     app,
-    path: "/",
-    cors: {
-      /**
-       * cors 통신 할 때 쿠키가 전달될 수 있도록 설정하는 옵션값들
-       * 응답 헤더의 Access-Control-Allow-Origin 값을 *로의 설정을 막고
-       * 특정 주소로 설정함에 따라 통신도 하고 cookie 전달도 할 수 있게 함
-       */
-      origin:
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3000"
-          : "https://withbbang.github.io",
-      credentials: true,
-    },
+    path: "/graphql",
+    cors: corsOption,
   });
 
   // app.use(
@@ -166,7 +155,10 @@ const port = 4000;
 
   // 서버 구동 수정
   await new Promise((resolve) =>
-    httpServer.listen(process.env.PORT || port, resolve),
+    httpServer.listen(
+      { port: process.env.PORT || port, cors: corsOption },
+      resolve,
+    ),
   );
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 })();
