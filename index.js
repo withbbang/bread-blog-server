@@ -3,7 +3,7 @@ const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 const expressPlayground =
   require("graphql-playground-middleware-express").default;
 const express = require("express");
-const http = require("http");
+const https = require("https");
 const cors = require("cors");
 const { readFileSync } = require("fs");
 const { PubSub } = require("graphql-subscriptions");
@@ -49,7 +49,7 @@ const port = 4000;
   );
 
   // httpServer로 app 다시 생성
-  const httpServer = http.createServer(app);
+  const httpServer = https.createServer(app);
 
   // 몽고디비 호스트 정보
   const MONGO_DB = process.env.DB_HOST;
